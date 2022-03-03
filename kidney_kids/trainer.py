@@ -2,18 +2,19 @@
 from cmath import log
 from webbrowser import get
 
-from logisticregression import LogReg, log_model
-from knn import Knn
-from randomforest import RandomForest
+#from logisticregression import LogReg, log_model
+#from knn import Knn
+#from randomforest import RandomForest
 
 import pandas as pd
-from data import get_clean_data
+from data import get_cleaned_data
 
 #import for pipe
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, StandardScaler
+from models import log_model, knn_model, forest_model
 
 import models
 
@@ -38,35 +39,41 @@ all -> minmax
 ...
 ['hemo'] -> standard
     '''
+
+
 ###baselinescore
 baseline = 250/400
 
 ####get the data####
-X,y = get_clean_data()
+X_train, X_test, y_train, y_test = get_cleaned_data()
 
 
 #model instanziation
+'''code for class-distribution:
 knn_model = models.knn_model(X,y)
 log_model = models.log_model(X,y)
-forest_model = models.forest_model(X,y)
+forest_model = models.forest_model(X,y)'''
 
-###make pipeline including the model
-def make_pipe(model):
 
-    if model != knn_model:
-        feat_binary = X.columns[X.nunique()==2]
-        feat_ordered = ['sg', 'al', 'su']
-        feat_standard_scaling = ['hemo', 'age']
+# creating feat_lists for pipeline:
+feat_binary = X_train.columns[X_train.nunique()==2]
+feat_ordered = ['sg', 'al', 'su']
+feat_standard_scaling = ['hemo', 'age']
+#all continous values without hemo and age as they are scaled differently
+feat_continuous = [i for i in list(X_train.columns[X_train.nunique()>6]) if i not in ['hemo', 'age']]
 
-        #all continous values without hemo and age as they are scaled differently
-        feat_continuous = [i for i in list(X.columns[X.nunique()>6]) if i not in ['hemo', 'age']]
 
+
+## pipeline
+def make_pipe(X, model):
+    '''preprocesses the X, returns preproccessed X'''
+    if model != 'knn_model':
         scaler = StandardScaler()
     else:
         scaler = MinMaxScaler()
 
     ordered_transformer = Pipeline([
-                                ('cat_imputer', SimpleImputer(strategy='most_frequent'))
+                                ('cat_imputer', SimpleImputer(strategy='most_frequent')),
                                 ('mm_scaler', MinMaxScaler())
                                 ])
 
@@ -90,8 +97,13 @@ def make_pipe(model):
                                         ('stand_trans', standard_transformer, feat_standard_scaling)
                                      ])
 
-    final_pipe = Pipeline([
-                        ('pipe', preproc_pipe),
-                        ('model', model)
-                        ])
-    return final_pipe
+    X_proc = preproc_pipe.fit_transform(X)
+    return X_proc
+if __name__ == '__main__':
+    #calling the preprocessing pipeline and instanziate+train the model wirth grid search
+    X_proc = make_pipe(X_train, 'knn_model')
+    model = knn_model(X_proc,y_train)[0]
+
+    #prediction
+    y_predict = model.predict(make_pipe(X_test,'knn_model'))
+    print(y_predict)

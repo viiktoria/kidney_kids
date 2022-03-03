@@ -6,9 +6,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import RepeatedStratifiedKFold
+import numpy as np
 
 
-def log_model(X,y):
+def log_model(X_train,y_train):
     model = LogisticRegression()
     cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
 
@@ -21,13 +22,10 @@ def log_model(X,y):
 
     # define search
     search = GridSearchCV(model, space, scoring='recall', n_jobs=-1, cv=cv)
-    result = search.fit(X,y)
-
+    result = search.fit(X_train,y_train)
     df = pd.DataFrame(result.cv_results_)
 
-    model = result.best_estimator_
-
-    return [model, df, result.best_params_]
+    return [result.best_estimator_, df, result.best_params_]
 
 
 '''old code when scaling was still part of the classes
@@ -38,7 +36,7 @@ def scaling(self,X,y):
 
     return X'''
 
-def knn_model(self,X,y):
+def knn_model(X_train,y_train):
     #X = self.scaling(X)
 
     knn_model = KNeighborsClassifier()
@@ -50,11 +48,11 @@ def knn_model(self,X,y):
 
 
     search = GridSearchCV(knn_model, param_grid=params, scoring='recall')
-    result = search.fit(X,y)
+    result = search.fit(X_train,y_train)
     df = pd.DataFrame(result.cv_results_)
     return [result.best_estimator_, df, result.best_params_]
 
-def forest_model(X,y):
+def forest_model(X_train,y_train):
     '''create the model, do the gridsearch
     and return fitted model with best params'''
     rfc=RandomForestClassifier()
@@ -68,12 +66,9 @@ def forest_model(X,y):
 
     cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv= 5)
 
-    cv_rfc.best_params_
-
     search = GridSearchCV(rfc, param_grid=param_grid, scoring='recall')
-    result = search.fit(X,y)
+    result = search.fit(X_train,y_train)
 
     df = pd.DataFrame(result.cv_results_)
-    model = result.best_estimator_
 
-    return [model, df, result.best_params_]
+    return [result.best_estimator_, df, result.best_params_]
