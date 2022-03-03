@@ -5,9 +5,4 @@
 raw_data/
 *.csv
 **/__pycache__/
-env
-.gitignore.swp
-.python-version
-Untitled.ipynb
-feature_selection.ipynb
 
