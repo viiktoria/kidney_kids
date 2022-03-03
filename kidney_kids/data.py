@@ -1,6 +1,7 @@
 #get data from csv and clean data. get_cleaned_data returns cleaned dataset with X and y
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 path = '../raw_data/kidney_disease.csv'
 
@@ -14,7 +15,9 @@ def get_cleaned_data(path=path):
     X = replacing_numerical_features(X)
     X,y = replacing_binary_features(X,y)
 
-    return X,y
+    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
+
+    return X_train, X_test, y_train, y_test
 
 def replacing_numerical_features(X):
     '''cleaning: strips \t at beginning of number and replaces ? with nan values'''
