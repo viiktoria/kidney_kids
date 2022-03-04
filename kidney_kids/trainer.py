@@ -99,6 +99,7 @@ def make_pipe(X, model):
 
     X_proc = preproc_pipe.fit_transform(X)
     return X_proc
+
 if __name__ == '__main__':
     #calling the preprocessing pipeline and instanziate+train the model wirth grid search
     X_proc = make_pipe(X_train, 'knn_model')

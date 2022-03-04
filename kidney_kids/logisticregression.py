@@ -66,15 +66,13 @@ class LogReg:
         search = GridSearchCV(model, space, scoring='recall', n_jobs=-1, cv=cv)
         result = search.fit(X_proc,y)
 
-        df = pd.DataFrame(result.cv_results_)
-
         model = result.best_estimator_
 
-        return [model, df, result.best_params_]
+        return model
 
     def return_trained_model(self,X_train,y_train):
         X_proc = self.preproc(X_train)
-        model = self.log_model(X_proc,y_train)[0]
+        model = self.log_model(X_proc,y_train)
 
         return model
 
