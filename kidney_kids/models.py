@@ -37,7 +37,6 @@ def scaling(self,X,y):
     return X'''
 
 def knn_model(X_train,y_train):
-    #X = self.scaling(X)
 
     knn_model = KNeighborsClassifier()
     params = {'n_neighbors': np.arange(2,11),
