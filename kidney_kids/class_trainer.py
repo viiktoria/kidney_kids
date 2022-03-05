@@ -12,6 +12,9 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, StandardScaler
 
+from gcp import storage_upload
+import joblib
+
 
 
 def initiate():
@@ -27,7 +30,7 @@ def initiate():
     forest_model = forest.return_trained_model(X_train, y_train)
 
     y_predict = forest_model.predict(forest.preproc(X_test))
-    print(y_predict)
+    #print(y_predict)
     return forest_model, X_test
 
 
@@ -38,7 +41,9 @@ def initiate():
 #    print(y_predict)
 
 if __name__ == '__main__':
-    #print(X_test)
-    #print(forest_model)
+    '''instantiate the model, train it with grid search and predict'''
     forest_model, X_test = initiate()
-    #initiate(forest_model, X_test, forest)
+
+    """Save the model into a .joblib format"""
+    joblib.dump(forest_model, 'model.joblib')
+    storage_upload()
