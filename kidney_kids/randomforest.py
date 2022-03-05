@@ -14,14 +14,16 @@ class RandomForest:
     def __init__(self):
         pass
 
-    def preproc(self,X_train):
+    def preproc(self, X_train):
 
+        ''' returns preprocessed data for log reg and tree
+        ( as two features are scaled differnetly then in knn )'''
         # creating feat_lists for pipeline
-        feat_binary = X_train.columns[X_train.nunique()==2]
+        feat_binary = ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
         feat_ordered = ['sg', 'al', 'su']
-        feat_standard_scaling = ['hemo', 'age']
-        #all continous values without hemo and age as they are scaled differently
-        feat_continuous = [i for i in list(X_train.columns[X_train.nunique()>6]) if i not in ['hemo', 'age']]
+        feat_continuous = ['age', 'bp', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc',
+        'rc']
+
 
 
         ordered_transformer = Pipeline([
@@ -37,20 +39,18 @@ class RandomForest:
                                     ('num_imputer', SimpleImputer()),
                                     ('mm_scaler', MinMaxScaler())
                                     ])
-        standard_transformer = Pipeline([
-                                        ('num_imputer', SimpleImputer()),
-                                        ('scaler', StandardScaler())
-                                        ])
 
         preproc_pipe = ColumnTransformer([
                                             ('ord_trans', ordered_transformer, feat_ordered),
                                             ('bin_trans', binary_transformer, feat_binary),
-                                            ('cont_trans', cont_transformer, feat_continuous),
-                                            ('stand_trans', standard_transformer, feat_standard_scaling)
+                                            ('cont_trans', cont_transformer, feat_continuous)
                                         ])
 
+
         X_proc = preproc_pipe.fit_transform(X_train)
+
         return X_proc
+
 
     def forest_model(self,X_proc,y_train):
         '''create the model, do the gridsearch
