@@ -12,6 +12,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, StandardScaler
 
+#import to upload model to gcp
 from gcp import storage_upload
 import joblib
 
@@ -46,4 +47,4 @@ if __name__ == '__main__':
 
     """Save the model into a .joblib format"""
     joblib.dump(forest_model, 'model.joblib')
-    storage_upload()
+    storage_upload('forest_model')

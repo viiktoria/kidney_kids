@@ -7,11 +7,11 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
-
+'''
 @app.get("/model")
 def model(model, *params):
-    '''this function returns the scaterplot and the
-    confusion matrix according to the choosen model (logreg, forest, knn) and the choosen parameters'''
+    #this function returns the scaterplot and the
+    #confusion matrix according to the choosen model (logreg, forest, knn) and the choosen parameters
 
     #knnmodel
     if model == 'Knn':
@@ -30,13 +30,13 @@ def model(model, *params):
         if params['max_depths'] == 1:
             pass
         else:
-            pass
+            pass'''
 
 
-@app.get("/predict")
+'''@app.get("/predict")
 def predict(model, features):
-    '''this function returns the prediction and probability of the
-    choosen model and features'''
+    #this function returns the prediction and probability of the
+    #choosen model and features
 
     #somehow like this it has to be done:
     model = joblib.load('model.joblib')
@@ -56,4 +56,4 @@ def predict(model, features):
     model = joblib.load('model.joblib')
     if rm:
         os.remove('model.joblib')
-    return model
+    return model'''
