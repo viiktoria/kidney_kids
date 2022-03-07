@@ -3,8 +3,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn import datasets
 from PIL import Image
+import plotly.express as px
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -20,7 +22,9 @@ forest_model = RandomForest()
 X_train_preproc = forest_model.preproc(X_train)
 X_test_preproc = forest_model.preproc(X_test)
 
-############STREAMLIT###########################
+################################################
+############    STREAMLIT    ###################
+################################################
 
 image1 = Image.open('kidney.png')
 
@@ -29,8 +33,10 @@ st.image(image1, use_column_width=True)
 st.write("""
          # Chronic Kidney Disease (CKD) Web App
 
-         This app **predicts CKD probability**. In addition, report to the doctor
-         valuable visualization for handy **data analysis**.
+         **Hey Doc!** You wanna use the robot for helping with the diagnosis?
+
+        This website gives an overview to better understand and use **Machine Learning to predict CKD**.
+
 
          * **Data source**: kidney_desease.csv
 
@@ -38,14 +44,35 @@ st.write("""
 
          """)
 
-# Header
 st.header('Statistics')
+
+##########################
+###### SCATTERPLOTS ######
+##########################
+
+st.write("""
+
+         ***Select features for scatterplot***
+
+         """)
+# numeric_columns = X_num_visualiation(X) # function from "data_preparation" notebook
+# x_values = st.selectbox("X axis", options=numeric_columns)
+# y_values = st.selectbox("Y axis", options=numeric_columns)
+x_values = st.selectbox("X axis", options=X_train_preproc)
+y_values = st.selectbox("Y axis", options=X_train_preproc)
+
+plot=px.scatter(data_frame=X_train_preproc, x=x_values, y=y_values) # define df
+st.plotly_chart(plot)
 
 st.write("""
 
          ***
 
          """)
+
+####################
+###### MODELS ######
+####################
 
 # Header
 st.header('Models')
@@ -77,10 +104,9 @@ st.write("""
          smaller values specify stronger regularization.\n
          ***max_iter***, int, default=100. Maximum number of iterations taken for the solvers to converge.
 
-
-
-
          """)
+
+#####  User select model and hyperparameters  ##################
 
 classifier_name = st.selectbox("Select Classifier", ("KNN", "Random Forest", "Logistic Regression"))
 
@@ -105,7 +131,8 @@ def add_parameters_ui(clf_name):
         params["max_iter"] = max_iter
     return params
 
-#### KIDNEY KIDS, FROM HERE USE THE ORIGINAL MODELS ################
+#### KIDNEY KIDS, FROM HERE USE THE ORIGINAL MODELS??? ################
+
 params = add_parameters_ui(classifier_name)
 
 def get_classifier(clf_name, params):
@@ -128,14 +155,7 @@ acc = accuracy_score(y_test, y_pred)
 st.write(f"classifier = {classifier_name}")
 st.write(f"Accuracy = {acc}")
 
-# fig = plt.figure()
-
-# plt.scatter(y_pred, y_test, cmap=plt.viridis)
-# plt.xlabel("CKD predicted")
-# plt.xlabel("Actual CKD")
-# plt.colorbar()
-
-# plt.show()
+#####  Plot actual vs predicted classification  ##################
 
 fig, ax = plt.subplots()
 ax.scatter(y_pred, y_test, alpha=0.8, cmap=plt.viridis)
@@ -150,44 +170,56 @@ st.write("""
 
          """)
 
+####################
+### DOC'S CHOICE ###
+####################
+
 # Header
 st.header('Make your choice Doc!')
 
+st.write("""
+
+         What do you think, which features are important? Choose your features!
 
 
-# # Checkbox
-# if st.checkbox("Show Dataset"):
-#     st.text('Showing Dataset')
+         """)
 
-# # Selection
-# appetite = st.selectbox('Appetite', ('Good','Poor'))
-# age = st.sidebar.selectbox('Age', list(reversed(range(2,91))))
-# # Sliders
-# # age = st.slider('Your Age',2,90)
+#####  User select features. Selected features into options variable  ##################
 
-# # Buttons
-# if st.button('About Us'):
-#     st.text('Kidney Kids 2022')
+#### we can do the df2 here and check if all this works ###
 
-# # Line chart test
-# x = X_preproc[:][1]
-# y = X_preproc[:][2]
-# st.line_chart(x)
-# st.line_chart(y)
+columns_names= df.columns.tolist()
+options = st.multiselect(
+    'What do you think, which  features are important? Choose your features!',
+    columns_names)
 
-# # # Scatterplot test
-# # plt.scatter(x,y)
-# # plt.show()
+st.write('You selected:', options)
 
-# documentation1
-# col1, col2, col3 = st.columns([2, 1, 2.5])
-# data = np.random.randn(10, 1)
+###  Kidney kids. We have to split the matrix with the subset (options variable)??  ###
+#### KIDNEY KIDS, FROM HERE USE THE ORIGINAL MODELS??? ################
 
-# col1.subheader("Confusion Matrix")
-# col1.line_chart(data)
+# sel = list(options.values())
 
-# col2.subheader("Hyperparameters")
-# col2.write(data)
+# df3 = df[sel]
 
-# col3.subheader("Scatterplot")
-# col3.line_chart(data)
+# clf = get_classifier(classifier_name, params)
+
+# clf.fit(X_train_preproc######, y_train)
+
+# y_pred = clf.predict(X_test_preproc######)
+
+# acc = accuracy_score(y_test, y_pred)
+# st.write(f"classifier = {classifier_name}")
+# st.write(f"Accuracy = {acc}")
+
+
+### doctor select a new row for a new prediction ####
+
+
+
+
+
+
+# Buttons
+if st.button('About Us'):
+    st.text('Kidney Kids 2022')
