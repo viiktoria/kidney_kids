@@ -11,6 +11,8 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from urllib import request
 import inspect
+from kidney_kids.scatters import scatter
+from starlette.responses import StreamingResponse
 
 app = FastAPI()
 
@@ -51,6 +53,14 @@ def model(*params):
             pass
         else:
             pass'''
+@app.get("/scatter")
+def plots(feat_1, feat_2):
+    plot = scatter(feat_1, feat_2)
+    #wie kann man plots zurück geben?
+    #return StreamingResponse(plot, media_type="image/png")
+    return {'scatter': 'scatter'}
+
+
 
 
 
@@ -99,11 +109,12 @@ def predict(age, bp, sg, al, su, rbc, pc, pcc, ba, bgr, bu,
        'sc': [sc], 'sod':[sod], 'pot': [pot], 'hemo': [hemo], 'pcv': [pcv], 'wc': [wc], 'rc': [rc], 'htn': [htn], 'dm': [dm], 'cad': [cad],
        'appet': [appet], 'pe': [pe], 'ane': [ane]}
     df_predict = pd.DataFrame.from_dict(dict)
-    X_test = data.preproc(df_predict)
+    X_test = data.get_preproc_data(df_predict)
 
     ### prediction
     #this format (np.array) is needed for the prediction:
     #array_test = np.array([0.75, 0., 0., 0., 0., 0., 0., 0., 0., 0., 2., 0., 0., 0.29885057, 0.23076923, 0.13034188, 0.12195122, 0.00529801, 0.84858044, 0.01797753, 0.97692308, 0.65, 0.31818182, 0.44067797]).reshape(1, -1)
+
     result = model.predict(X_test)
     proba = model.predict_proba(X_test)
 

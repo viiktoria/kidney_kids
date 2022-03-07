@@ -38,12 +38,6 @@ def get_cleaned_data(path=url):
 
     return X_train, X_test, y_train, y_test
 
-#function provides one dataline just for testing the api, not needed when api is working
-def testing_api_data():
-    get_cleaned_data()[0].head(1)
-    X_test = preproc(get_cleaned_data()[0].head(1))
-    return X_test
-
 def replacing_numerical_features(X):
     '''cleaning: strips \t at beginning of number and replaces ? with nan values'''
     X['pcv'] = X['pcv'].str.lstrip('\t')
