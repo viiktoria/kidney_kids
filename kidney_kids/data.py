@@ -64,7 +64,7 @@ def replacing_binary_features(X, y):
 
     return X, y
 
-def preproc(X_train):
+def get_preproc_data(X_train):
 
     ''' returns preprocessed data'''
     # creating feat_lists for pipeline
@@ -96,11 +96,13 @@ def preproc(X_train):
                                     ])
 
 
-    X_proc = preproc_pipe.fit_transform(X_train)
+    X_preproc = preproc_pipe.fit_transform(X_train)
+    SimpleImputer.get_feature_names_out = (lambda self, names=None: self.feature_names_in_)
+    X_preproc_df = pd.DataFrame(X_preproc, columns=preproc_pipe.get_feature_names_out())
 
-    return X_proc
+    return X_preproc_df
 
-def get_imputed_data(X):
+def get_imputed_data(X_train):
 
     # creating feat_lists for pipeline
     feat_binary = ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
@@ -126,9 +128,8 @@ def get_imputed_data(X):
                                         ('cont_trans', cont_transformer, feat_continuous)
                                      ])
 
-    X_imputed = imputed_pipe.fit_transform(X)
+    X_imputed = imputed_pipe.fit_transform(X_train)
     SimpleImputer.get_feature_names_out = (lambda self, names=None: self.feature_names_in_)
-    print(imputed_pipe.get_feature_names_out())
     X_imputed_df = pd.DataFrame(X_imputed, columns=imputed_pipe.get_feature_names_out())
 
     return X_imputed_df
