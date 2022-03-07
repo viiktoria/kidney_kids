@@ -2,10 +2,22 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+
+#import for pipe
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, StandardScaler
+
 
 path = '../raw_data/kidney_disease.csv'
-
-def get_cleaned_data(path=path):
+url = "https://storage.googleapis.com/kidney_disaese/raw_data/kidney_disease.csv"
+def get_cleaned_data(path=url):
     '''load data from csv
     and use cleaning fct to clean them'''
     df = pd.read_csv(path)
@@ -44,6 +56,42 @@ def replacing_binary_features(X, y):
     y= y.replace(to_replace={'ckd':1,'notckd':0, 'ckd\t': 1}).astype(int)
 
     return X, y
+
+def preproc(X_train):
+
+    ''' returns preprocessed data'''
+    # creating feat_lists for pipeline
+    feat_binary = ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+    feat_ordered = ['sg', 'al', 'su']
+    feat_continuous = ['age', 'bp', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc',
+    'rc']
+
+
+
+    ordered_transformer = Pipeline([
+                                ('cat_imputer', SimpleImputer(strategy='most_frequent')),
+                                ('mm_scaler', MinMaxScaler())
+                                ])
+
+    binary_transformer = Pipeline([
+                                ('cat_imputer', SimpleImputer(strategy='most_frequent'))
+                                ])
+
+    cont_transformer = Pipeline([
+                                ('num_imputer', SimpleImputer()),
+                                ('mm_scaler', MinMaxScaler())
+                                ])
+
+    preproc_pipe = ColumnTransformer([
+                                        ('ord_trans', ordered_transformer, feat_ordered),
+                                        ('bin_trans', binary_transformer, feat_binary),
+                                        ('cont_trans', cont_transformer, feat_continuous)
+                                    ])
+
+
+    X_proc = preproc_pipe.fit_transform(X_train)
+
+    return X_proc
 
 if __name__ == '__main__':
     X,y = get_cleaned_data("../raw_data/kidney_disease.csv")
