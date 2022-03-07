@@ -15,6 +15,13 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, StandardScaler
 
 
+ # creating feat_lists for pipeline
+feat_binary = ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+feat_ordered = ['sg', 'al', 'su']
+feat_continuous = ['age', 'bp', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc',
+'rc']
+
+
 path = '../raw_data/kidney_disease.csv'
 url = "https://storage.googleapis.com/kidney_disaese/raw_data/kidney_disease.csv"
 def get_cleaned_data(path=url):
@@ -92,6 +99,39 @@ def preproc(X_train):
     X_proc = preproc_pipe.fit_transform(X_train)
 
     return X_proc
+
+def get_imputed_data(X):
+
+    # creating feat_lists for pipeline
+    feat_binary = ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
+    feat_ordered = ['sg', 'al', 'su']
+    feat_continuous = ['age', 'bp', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc',
+    'rc']
+
+    ordered_transformer = Pipeline([
+                                ('cat_imputer', SimpleImputer(strategy='most_frequent'))
+                                ])
+
+    binary_transformer = Pipeline([
+                                ('cat_imputer', SimpleImputer(strategy='most_frequent'))
+                                ])
+
+    cont_transformer = Pipeline([
+                                ('num_imputer', SimpleImputer())
+                                ])
+
+    imputed_pipe = ColumnTransformer([
+                                        ('ord_trans', ordered_transformer, feat_ordered),
+                                        ('bin_trans', binary_transformer, feat_binary),
+                                        ('cont_trans', cont_transformer, feat_continuous)
+                                     ])
+
+    X_imputed = imputed_pipe.fit_transform(X)
+    SimpleImputer.get_feature_names_out = (lambda self, names=None: self.feature_names_in_)
+    print(imputed_pipe.get_feature_names_out())
+    X_imputed_df = pd.DataFrame(X_imputed, columns=imputed_pipe.get_feature_names_out())
+
+    return X_imputed_df
 
 if __name__ == '__main__':
     X,y = get_cleaned_data("../raw_data/kidney_disease.csv")
