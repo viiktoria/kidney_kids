@@ -5,7 +5,7 @@ COPY requirements.txt /requirements.txt
 COPY Makefile /Makefile
 COPY MANIFEST.in /MANIFEST.in
 COPY app.py /app.py
-COPY main.py /main.py
+
 COPY api /api
 
 COPY kidney_kids /kidney_kids
