@@ -31,6 +31,12 @@ def get_cleaned_data(path=url):
 
     return X_train, X_test, y_train, y_test
 
+#function provides one dataline just for testing the api, not needed when api is working
+def testing_api_data():
+    get_cleaned_data()[0].head(1)
+    X_test = preproc(get_cleaned_data()[0].head(1))
+    return X_test
+
 def replacing_numerical_features(X):
     '''cleaning: strips \t at beginning of number and replaces ? with nan values'''
     X['pcv'] = X['pcv'].str.lstrip('\t')
@@ -57,14 +63,16 @@ def replacing_binary_features(X, y):
 
     return X, y
 
+
 def preproc(X_train):
 
-    ''' returns preprocessed data'''
+    ''' returns preprocessed data for log reg and tree
+    ( as two features are scaled differnetly then in knn )'''
     # creating feat_lists for pipeline
     feat_binary = ['rbc', 'pc', 'pcc', 'ba', 'htn', 'dm', 'cad', 'appet', 'pe', 'ane']
     feat_ordered = ['sg', 'al', 'su']
     feat_continuous = ['age', 'bp', 'bgr', 'bu', 'sc', 'sod', 'pot', 'hemo', 'pcv', 'wc',
-    'rc']
+       'rc']
 
 
 
