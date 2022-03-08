@@ -309,17 +309,20 @@ print(selected_features)
 #### ADD DEFAULT VALUES #######
 
 url = 'https://testimage2-f77cyo2fpq-ew.a.run.app/predict'
-url = 'http://127.0.0.1:8000/predict'
+#url = 'http://127.0.0.1:8000/predict'
 
 result = requests.get(url, selected_features) ######### UNCOMMENT ########
 
+#outputs prediction and probabilty of prediction from current local api:
+#st.write(f"Classification: {result.json()['result']}")
+#proba = round(float(result.json()['proba']), 2)
+#st.write(f"Prabability: {proba}")
 
 
-
-#outputs prediction and probabilty of prediction
+#outputs prediction and probabilty of prediction from current image:
 st.write(f" Classification: {result.json()['result']} ")
 for i, j in result.json()['proba'].items():
-    st.write(f" Probability: {round(j, 2)} ")
+    st.write(f" Probability: {round(j, 5)} ")
 
 
 # if result==0:
