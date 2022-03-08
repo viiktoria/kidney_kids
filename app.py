@@ -59,10 +59,11 @@ st.write("""
 # numeric_columns = X_num_visualiation(X) # function from "data_preparation" notebook
 # x_values = st.selectbox("X axis", options=numeric_columns)
 # y_values = st.selectbox("Y axis", options=numeric_columns)
-x_values = st.selectbox("X axis", options=X_train_preproc)
-y_values = st.selectbox("Y axis", options=X_train_preproc)
 
-params = {"x": x_values, "y": y_values}
+# x_values = st.selectbox("X axis", options=X_train_preproc)
+# y_values = st.selectbox("Y axis", options=X_train_preproc)
+
+# params = {"x": x_values, "y": y_values}
 
 # plot=px.scatter(data_frame=X_train_preproc, x=x_values, y=y_values) # define df
 # st.plotly_chart(plot)
@@ -104,10 +105,8 @@ st.write("""
          ### Logistic Regression
          **Definition**: supervised learning classification algorithm used to predict the probability of CKD
 
-         **Hyperparameters considered**:\n
-         ***C***, float, default=1.0. Inverse of regularization strength; must be a positive float. Like in support vector machines,
-         smaller values specify stronger regularization.\n
-         ***max_iter***, int, default=100. Maximum number of iterations taken for the solvers to converge.
+         **Hyperparameter considered**:
+         ***penalty***, default=l2. Specify the norm of the penalty: 'none': no penalty is added; 'l2': add a L2 penalty term and it is the default choice; 'l1': add a L1 penalty term; 'elasticnet': both L1 and L2 penalty terms are added.
 
          """)
 
@@ -122,24 +121,26 @@ def add_parameters_ui(clf_name):
     if clf_name == "KNN":
         n_neighbors = st.slider("n_neighbors", 1, 15)
         p = st.selectbox("p", options=[1,2])
-        params["model"] = clf_name
+        # params["model"] = clf_name
         params["n_neighbors"] = n_neighbors
         params["p"] = p
     elif clf_name == "Random Forest":
         max_depth = st.slider("max_depth", 2, 15)
         n_estimators = st.slider("n_estimators", 1, 100)
-        params["model"] = clf_name
+        # params["model"] = clf_name
         params["max_depth"] = max_depth
         params["n_estimators"] = n_estimators
     else:
-        C = st.slider("C", 0.01, 100.0)
-        max_iter = st.slider("max_iter", 2, 15)
-        params["model"] = clf_name
-        params["C"] = C
-        params["max_iter"] = max_iter
+        penalty = st.selectbox("penalty", 'L1', 'L2', 'elastic')
+        # solver = st.selectbox("solver", 'liblinear', 'lbfgs')
+        # params["model"] = clf_name
+        params["penalty"] = penalty
+        # params["solver"] = solver
     return params
 
-params = add_parameters_ui(classifier_name)
+st.write(classifier_name)
+add_parameters_ui(classifier_name)
+# params =
 
 # confusion_matrix = requests.get(url, params) ######### UNCOMMENT ########
 
@@ -261,44 +262,55 @@ st.write("""
 # pe=st.selectbox('pedal edema (pe): yes (1) no (0)',options=[0,1])
 # ane=st.selectbox('anemia (ane): yes (1) no (0)',options=[0,1])
 
-age=st.slider('age',min_value=2, max_value=90)
-bp=st.slider('blood pressure (mm/Hg)', min_value=45, max_value=180)
-sg=st.slider('urin specific gravity (sg)',min_value=1.005,max_value=1.025,step=0.005)
-al=st.slider('albumin (al)', min_value=0,max_value=5)
-su=st.slider('sugar (su)', min_value=0,max_value=5)
-rbc=st.selectbox('red blood care (rbc): abnormal (1) normal (0)', options=[0,1])
-pc=st.selectbox('pus cell (pc): abnormal (1) normal (0)', options=[0,1])
-pcc=st.selectbox('pus cell clumps (pcc): present (1) not present (0)', options=[0,1])
+# 10 selected features
+age=st.slider('age',min_value=2, max_value=90, value=55)
+# bp=st.slider('blood pressure (mm/Hg)', min_value=45, max_value=180)
+sg=st.slider('urin specific gravity (sg)',min_value=1.005,max_value=1.025,step=0.005, value=1.02)
+# al=st.slider('albumin (al)', min_value=0,max_value=5)
+su=st.slider('sugar (su)', min_value=0,max_value=5, value=0)
+# rbc=st.selectbox('red blood care (rbc): abnormal (1) normal (0)', options=[0,1])
+# pc=st.selectbox('pus cell (pc): abnormal (1) normal (0)', options=[0,1])
+# pcc=st.selectbox('pus cell clumps (pcc): present (1) not present (0)', options=[0,1])
 ba=st.selectbox('bacteria (ba): present (1) not present (0)', options=[0,1])
-bgr=st.slider('blood gluco random (mgs/dl)', min_value=70, max_value=500)
-bu=st.slider('blood urea (mgs/dl)', min_value=10, max_value=309)
-sc=st.slider('serum creatinine (mgs/dl)', min_value=0.4, max_value=15.2, step=0.1)
-sod=st.slider('sodium (mEq/L)', min_value=111, max_value=150)
-pot=st.slider('potassium (mEq/L)', min_value=2.5, max_value=47.0, step=0.1)
-hemo=st.slider('hemoglobin (gms)', min_value=3.1, max_value=17.8, step=0.1)
-pcv=st.slider('packed cell count (pcv)', min_value=16, max_value=55)
-wc=st.slider('white blood cell count (cells/cumm)', min_value=3000, max_value=15000, step=100)
-rc=st.slider('red blood cell count (millions/cumm)', min_value=2.2, max_value=6.9, step=0.1)
+bgr=st.slider('blood gluco random (mgs/dl)', min_value=70, max_value=500, value=117)
+# bu=st.slider('blood urea (mgs/dl)', min_value=10, max_value=309)
+# sc=st.slider('serum creatinine (mgs/dl)', min_value=0.4, max_value=15.2, step=0.1)
+# sod=st.slider('sodium (mEq/L)', min_value=111, max_value=150)
+# pot=st.slider('potassium (mEq/L)', min_value=2.5, max_value=47.0, step=0.1)
+hemo=st.slider('hemoglobin (gms)', min_value=3.1, max_value=17.8, step=0.1, value=13.5)
+pcv=st.slider('packed cell count (pcv)', min_value=16, max_value=55, value=41)
+wc=st.slider('white blood cell count (cells/cumm)', min_value=3000, max_value=15000, step=100, value=6900)
+# rc=st.slider('red blood cell count (millions/cumm)', min_value=2.2, max_value=6.9, step=0.1)
 htn=st.selectbox('hypertension (htn): yes (1) no (0)', options=[0,1])
-dm=st.selectbox('diabetes mellitus (dm): yes (1) no (0)', options=[0,1])
-cad=st.selectbox('coronary artery disease (cad): yes (1) no (0)', options=[0,1])
-appet=st.selectbox('appetite (appet): good (1) poor (0)', options=[0,1])
+# dm=st.selectbox('diabetes mellitus (dm): yes (1) no (0)', options=[0,1])
+# cad=st.selectbox('coronary artery disease (cad): yes (1) no (0)', options=[0,1])
+# appet=st.selectbox('appetite (appet): good (1) poor (0)', options=[0,1])
 pe=st.selectbox('pedal edema (pe): yes (1) no (0)', options=[0,1])
-ane=st.selectbox('anemia (ane): yes (1) no (0)', options=[0,1])
+# ane=st.selectbox('anemia (ane): yes (1) no (0)', options=[0,1])
 
 
 # make a query:
 
 #### remove brackets ######
-selected_features = {'age':age,'bp':bp,'sg':sg,'al':al,'su':su,'rbc':rbc,'pc':pc,'pcc':pcc,'ba':ba,'bgr':bgr,'bu':bu,'sc':sc,'sod':sod,'pot':pot,'heml':hemo,'pvc':pcv,'wc':wc,'rc':rc,'htn':htn,'dm':dm,'cad':cad,'appet':appet,'pe':pe,'ane':ane}
+# selected_features = {'age':age,'bp':bp,'sg':sg,'al':al,'su':su,'rbc':rbc,'pc':pc,'pcc':pcc,'ba':ba,'bgr':bgr,'bu':bu,'sc':sc,'sod':sod,'pot':pot,'heml':hemo,'pvc':pcv,'wc':wc,'rc':rc,'htn':htn,'dm':dm,'cad':cad,'appet':appet,'pe':pe,'ane':ane}
+selected_features = {'age':age,'sg':sg,'su':su,'ba':ba,'bgr':bgr,'hemo':hemo,'pvc':pcv,'wc':wc,'htn':htn,'pe':pe, 'bp': 80, 'bu': 44, 'sc':1.2, 'sod':136, 'pot':4, 'rc':5.2, 'al':0, 'rbc':0, 'pc':0, 'pcc':0, 'dm':0, 'cad': 0, 'appet': 2, 'ane':0}
+selected_features = dict([a, str(x)] for a, x in selected_features.items())
+
 # selected_features = pd.DataFrame({'age':[age],'bp':[bp],'sg':[sg],'al':[al],'su':[su],'rbc':[rbc],'pc':[pc],'pcc':[pcc],'ba':[ba],'bgr':[bgr],'bu':[bu],'sc':[sc],'sod':[sod],'pot':[pot],'heml':[hemo],'pvc':[pcv],'wc':[wc],'rc':[rc],'htn':[htn],'dm':[dm],'cad':[cad],'appet':[appet],'pe':[pe],'ane':[ane]})
+
+print(selected_features)
 
 # selected_features
 # result = loaded_model.predict(selected_features)
 
 #### ADD DEFAULT VALUES #######
 
-# result = requests.get(url, selected_features) ######### UNCOMMENT ########
+# url = 'https://testimage2-f77cyo2fpq-ew.a.run.app/predict'
+
+# result = requests.get(url, params=selected_features) ######### UNCOMMENT ########
+
+# result.json()
+
 
 # if result==0:
 #     answer='You are not at risk of CKD.'
@@ -313,10 +325,52 @@ selected_features = {'age':age,'bp':bp,'sg':sg,'al':al,'su':su,'rbc':rbc,'pc':pc
 #     st.write(answer)
 
 # Buttons
-# if st.button('About Us'):
-#     st.write('Kidney Kids 2022: Viktoria von Laer, Jeanne Mbebi, Markus Kramer, Cristian Jeraldo')
-    #image3 = Image.open('kidney.png')
-    #st.image(image3)
+if st.button('About Us'):
+    st.write('Kidney Kids 2022: Viktoria von Laer, Jeanne Mbebi, Markus Kramer, Cristian Jeraldo')
+    image3 = Image.open('lewagon.png')
+    st.image(image3)
 
-if st.button('Say hello'):
-     st.write('Why hello there')
+
+# {'age': 55.0,
+#  'bp': 80.0,
+#  'bgr': 116.5,
+#  'bu': 44.0,
+#  'sc': 1.2,
+#  'sod': 136.0,
+#  'pot': 4.0,
+#  'hemo': 13.5,
+#  'pcv': 41.0,
+#  'wc': 6900.0,
+#  'rc': 5.2,
+#  'sg': 1.02,
+#  'al': 0.0,
+#  'su': 0.0,
+#  'rbc': 0.0,
+#  'pc': 0.0,
+#  'pcc': 0.0,
+#  'ba': 0.0,
+#  'htn': 0.0,
+#  'dm': 0.0,
+#  'cad': 0.0,
+#  'appet': 2.0,
+#  'pe': 0.0,
+#  'ane': 0.0}
+
+# # Selected variables
+# {'age': 55.0,
+#  'bgr': 116.5,
+#  'hemo': 13.5,
+#  'pcv': 41.0,
+#  'wc': 6900.0,
+#  'sg': 1.02,
+#  'su': 0.0,
+#  'ba': 0.0,
+#  'htn': 0.0,
+#  'pe': 0.0}
+
+# # Numeric selected variables
+# {'age': 55.0,
+#  'bgr': 116.5,
+#  'hemo': 13.5,
+#  'pcv': 41.0,
+#  'wc': 6900.0}
