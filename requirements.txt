@@ -34,3 +34,6 @@ termcolor
 matplotlib
 seaborn
 statsmodels
+
+#website
+streamlit

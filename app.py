@@ -18,7 +18,8 @@ from sklearn.metrics import accuracy_score
 from kidney_kids.data import get_cleaned_data
 from kidney_kids.randomforest import RandomForest
 
-X_train, X_test, y_train, y_test = get_cleaned_data(path = 'raw_data/kidney_disease.csv')
+X_train, X_test, y_train, y_test = get_cleaned_data()
+
 forest_model = RandomForest()
 X_train_preproc = forest_model.preproc(X_train)
 X_test_preproc = forest_model.preproc(X_test)
