@@ -121,12 +121,12 @@ def predict(age, bp, sg, al, su, rbc, pc, pcc, ba, bgr, bu,
     result = model.predict(X_test)
     proba = model.predict_proba(X_test)
 
-    return {"result": str(result[0]), "proba": str(proba)}
+
+
+
+    return {"result": str(result[0]), "proba": str(proba[0][1])}
 
 
     #if rm:
     #    os.remove('model.joblib')
     #return model
-
-
-
