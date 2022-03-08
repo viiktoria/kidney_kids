@@ -43,3 +43,10 @@ def plot_df(feat1, feat2):
 
     return df[feat1, feat2, 'target']
 
+
+def confusion_score(classifier):
+    X_train,y_train, y_test,X_test = get_cleaned_data()
+    clr_rf = classifier.fit(X_train,y_train)
+    ac = accuracy_score(y_test,classifier.predict(X_test))
+    cm = confusion_matrix(y_test, clr_rf.predict(X_test))
+    return(sns.heatmap(cm,annot=True,fmt="d"), f'Accuracy is {ac}')
