@@ -37,5 +37,6 @@ def plot_df(feat1, feat2):
     X_train = get_cleaned_data()[0]
     df = get_preproc_data(X_train)
     df['target'] = get_cleaned_data()[2]
+    df[feat1, feat2, 'target']
 
-    return df['target']
+    return df[feat1, feat2, 'target']
