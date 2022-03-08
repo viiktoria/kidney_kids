@@ -34,7 +34,11 @@ def get_cleaned_data(path=url):
     X = replacing_numerical_features(X)
     X,y = replacing_binary_features(X,y)
 
-    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
+    X_train = X_train.reset_index(drop=True)
+    X_test = X_test.reset_index(drop=True)
+    y_train = y_train.reset_index(drop=True)
+    y_test = y_test.reset_index(drop=True)
 
     return X_train, X_test, y_train, y_test
 
@@ -101,7 +105,9 @@ def get_preproc_data(X_train):
 
     X_preproc = preproc_pipe.fit_transform(X_train)
     SimpleImputer.get_feature_names_out = (lambda self, names=None: self.feature_names_in_)
-    X_preproc_df = pd.DataFrame(X_preproc, columns=preproc_pipe.get_feature_names_out())
+    names = preproc_pipe.get_feature_names_out()
+    new_names = list(map(lambda x: x.split('__')[-1],names))
+    X_preproc_df = pd.DataFrame(X_preproc, columns=new_names)
 
     return X_preproc_df
 
@@ -133,7 +139,9 @@ def get_imputed_data(X_train):
 
     X_imputed = imputed_pipe.fit_transform(X_train)
     SimpleImputer.get_feature_names_out = (lambda self, names=None: self.feature_names_in_)
-    X_imputed_df = pd.DataFrame(X_imputed, columns=imputed_pipe.get_feature_names_out())
+    names = X_imputed.get_feature_names_out()
+    new_names = list(map(lambda x: x.split('__')[-1],names))
+    X_imputed_df = pd.DataFrame(X_imputed, columns=new_names)
 
     return X_imputed_df
 

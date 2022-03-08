@@ -1,4 +1,5 @@
 '''this is the api file, here are our endpoints'''
+from codecs import BufferedIncrementalDecoder
 from fastapi import FastAPI
 from kidney_kids import data
 from google.cloud import storage
@@ -11,10 +12,12 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from urllib import request
 import inspect
-from kidney_kids.scatters import scatter
+from kidney_kids.scatters import scatter, plot_df
 from starlette.responses import StreamingResponse
+from io import BytesIO
 
 app = FastAPI()
+buffi = BytesIO()
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,7 +30,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello mundo"}
 
 '''
 @app.get("/model")
@@ -54,12 +57,14 @@ def model(*params):
         else:
             pass'''
 @app.get("/scatter")
-def plots(feat_1, feat_2):
-    plot = scatter(feat_1, feat_2)
+async def plots(feat1, feat2):
+    df = plot_df(feat1, feat2)
     #wie kann man plots zurück geben?
     #return StreamingResponse(plot, media_type="image/png")
-    return {'scatter': 'scatter'}
-
+    #return {'scatter': 'scatter'}
+    result = df.to_json(orient="split")
+    return result
+    # create a buffer to store image data
 
 
 
