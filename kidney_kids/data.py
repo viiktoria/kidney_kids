@@ -139,7 +139,7 @@ def get_imputed_data(X_train):
 
     X_imputed = imputed_pipe.fit_transform(X_train)
     SimpleImputer.get_feature_names_out = (lambda self, names=None: self.feature_names_in_)
-    names = X_imputed.get_feature_names_out()
+    names = imputed_pipe.get_feature_names_out()
     new_names = list(map(lambda x: x.split('__')[-1],names))
     X_imputed_df = pd.DataFrame(X_imputed, columns=new_names)
 
