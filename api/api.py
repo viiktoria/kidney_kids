@@ -1,4 +1,5 @@
 '''this is the api file, here are our endpoints'''
+from codecs import BufferedIncrementalDecoder
 from fastapi import FastAPI
 from kidney_kids import data
 from google.cloud import storage
@@ -11,6 +12,7 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from urllib import request
 import inspect
+
 from kidney_kids.scatters import scatter, confusion_score
 from starlette.responses import StreamingResponse
 from sklearn.neighbors import KNeighborsClassifier
@@ -19,6 +21,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 
 app = FastAPI()
+buffi = BytesIO()
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,7 +34,9 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+
     return {"message": "something else"}
+
 
 
 @app.get("/model")
@@ -47,10 +52,12 @@ def confusion_matrix(model, params):
         C = params['C']
         model = LogisticRegression(penalty=penalty, C=C)
     else:
+
         model = RandomForestClassifier()
 
     #get confusion matrxi from scatters.py
     df_conf_matrix = confusion_score(model)
+
 
     return {'conf_matrix': df_conf_matrix.to_json()}
 
