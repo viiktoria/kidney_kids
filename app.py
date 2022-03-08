@@ -20,6 +20,8 @@ from kidney_kids.randomforest import RandomForest
 
 X_train, X_test, y_train, y_test = get_cleaned_data()
 
+
+
 forest_model = RandomForest()
 X_train_preproc = forest_model.preproc(X_train)
 X_test_preproc = forest_model.preproc(X_test)
@@ -294,8 +296,8 @@ pe=st.selectbox('pedal edema (pe): yes (1) no (0)', options=[0,1])
 
 #### remove brackets ######
 # selected_features = {'age':age,'bp':bp,'sg':sg,'al':al,'su':su,'rbc':rbc,'pc':pc,'pcc':pcc,'ba':ba,'bgr':bgr,'bu':bu,'sc':sc,'sod':sod,'pot':pot,'heml':hemo,'pvc':pcv,'wc':wc,'rc':rc,'htn':htn,'dm':dm,'cad':cad,'appet':appet,'pe':pe,'ane':ane}
-selected_features = {'age':age,'sg':sg,'su':su,'ba':ba,'bgr':bgr,'hemo':hemo,'pvc':pcv,'wc':wc,'htn':htn,'pe':pe, 'bp': 80, 'bu': 44, 'sc':1.2, 'sod':136, 'pot':4, 'rc':5.2, 'al':0, 'rbc':0, 'pc':0, 'pcc':0, 'dm':0, 'cad': 0, 'appet': 2, 'ane':0}
-selected_features = dict([a, str(x)] for a, x in selected_features.items())
+selected_features = {'age':age,'sg':sg,'su':su,'ba':ba,'bgr':bgr,'hemo':hemo,'pcv':pcv,'wc':wc,'htn':htn,'pe':pe, 'bp': 80, 'bu': 44, 'sc':1.2, 'sod':136, 'pot':4, 'rc':5.2, 'al':0, 'rbc':0, 'pc':0, 'pcc':0, 'dm':0, 'cad': 0, 'appet': 2, 'ane':0}
+#selected_features = dict([a, str(x)] for a, x in selected_features.items())
 
 # selected_features = pd.DataFrame({'age':[age],'bp':[bp],'sg':[sg],'al':[al],'su':[su],'rbc':[rbc],'pc':[pc],'pcc':[pcc],'ba':[ba],'bgr':[bgr],'bu':[bu],'sc':[sc],'sod':[sod],'pot':[pot],'heml':[hemo],'pvc':[pcv],'wc':[wc],'rc':[rc],'htn':[htn],'dm':[dm],'cad':[cad],'appet':[appet],'pe':[pe],'ane':[ane]})
 
@@ -307,10 +309,17 @@ print(selected_features)
 #### ADD DEFAULT VALUES #######
 
 url = 'https://testimage2-f77cyo2fpq-ew.a.run.app/predict'
+url = 'http://127.0.0.1:8000/predict'
 
 result = requests.get(url, selected_features) ######### UNCOMMENT ########
 
-# result.json()
+
+
+
+#outputs prediction and probabilty of prediction
+st.write(f" Classification: {result.json()['result']} ")
+for i, j in result.json()['proba'].items():
+    st.write(f" Probability: {round(j, 2)} ")
 
 
 # if result==0:
