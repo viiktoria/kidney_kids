@@ -305,9 +305,9 @@ print(selected_features)
 
 #### ADD DEFAULT VALUES #######
 
-# url = 'https://testimage2-f77cyo2fpq-ew.a.run.app/predict'
+url = 'https://testimage2-f77cyo2fpq-ew.a.run.app/predict'
 
-# result = requests.get(url, params=selected_features) ######### UNCOMMENT ########
+result = requests.get(url, selected_features) ######### UNCOMMENT ########
 
 # result.json()
 
