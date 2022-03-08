@@ -9,9 +9,6 @@ COPY app.py /app.py
 COPY api /api
 
 COPY kidney_kids /kidney_kids
-#COPY kidney_kids/model.joblib /model.joblib
-
-
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt

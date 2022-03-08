@@ -34,6 +34,8 @@ async def root():
     return {"message": "something else"}
 
 
+
+
 @app.get("/model")
 def confusion_matrix(model, params):
     '''takes in the model and its parameters
@@ -47,10 +49,13 @@ def confusion_matrix(model, params):
         C = params['C']
         model = LogisticRegression(penalty=penalty, C=C)
     else:
+
+
         model = RandomForestClassifier()
 
     #get confusion matrxi from scatters.py
     df_conf_matrix = confusion_score(model)
+
 
     return {'conf_matrix': df_conf_matrix.to_json()}
 

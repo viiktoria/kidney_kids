@@ -1,6 +1,7 @@
 import seaborn as sns
 from io import BytesIO
 from kidney_kids.data import get_cleaned_data, get_imputed_data, get_preproc_data
+from sklearn.metrics import accuracy_score, confusion_matrix
 
 
 def scatter(feat1, feat2):
@@ -30,6 +31,7 @@ def scatter_preproc(feat1, feat2):
     target = get_cleaned_data()[2]
 
 
+
     return sns.scatterplot(data=df, x=feat1, y=feat2, hue=target)
 
 
@@ -40,3 +42,4 @@ def plot_df(feat1, feat2):
     df[feat1, feat2, 'target']
 
     return df[feat1, feat2, 'target']
+
