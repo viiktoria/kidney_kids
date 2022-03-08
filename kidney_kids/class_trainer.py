@@ -19,6 +19,7 @@ import joblib
 
 
 def initiate():
+    '''initiate model'''
     #get data
     X_train, X_test, y_train, y_test = get_cleaned_data()
 
@@ -34,17 +35,10 @@ def initiate():
     #print(y_predict)
     return forest_model, X_test
 
-
-#predict:
-#def predict(model, X_test, forest):
-#    #print(X_test)
-#    y_predict = model.predict(forest.preproc(X_test))
-#    print(y_predict)
-
 if __name__ == '__main__':
-    '''instantiate the model, train it with grid search and predict'''
+    '''instantiate the model, train it with grid search'''
     forest_model, X_test = initiate()
 
-    """Save the model into a .joblib format"""
+    """Save the model into a .joblib format and load it to google storage"""
     joblib.dump(forest_model, 'model.joblib')
     storage_upload('forest_model')

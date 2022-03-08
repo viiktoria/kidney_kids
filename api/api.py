@@ -11,8 +11,12 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from urllib import request
 import inspect
-from kidney_kids.scatters import scatter
+from kidney_kids.scatters import scatter, confusion_score
 from starlette.responses import StreamingResponse
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+
 
 app = FastAPI()
 
@@ -27,43 +31,37 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "something else"}
 
-'''
+
 @app.get("/model")
-def model(*params):
-    #this function returns the scaterplot and the
-    #confusion matrix according to the choosen model (logreg, forest, knn) and the choosen parameters
+def confusion_matrix(model, params):
+    '''takes in the model and its parameters
+    and returns the according confusion matrix'''
 
-    #knnmodel
-    if model == 'Knn':
-
-
-    #logregmodel
-    elif model == 'LogReg':
-        if params['penalty'] == 'l1':
-            pass
-        elif params["penalty"] == 'l2':
-            pass
-        else:
-            pass
-    #forestmodel
+    if model == 'knn':
+        k = params['k']
+        model = KNeighborsClassifier(n_neighbors=k)
+    elif model == 'logreg':
+        penalty = params['penalty']
+        C = params['C']
+        model = LogisticRegression(penalty=penalty, C=C)
     else:
-        if params['max_depths'] == 1:
-            pass
-        else:
-            pass'''
+        model = RandomForestClassifier()
+
+    #get confusion matrxi from scatters.py
+    df_conf_matrix = confusion_score(model)
+
+    return {'conf_matrix': df_conf_matrix.to_json()}
+
+
 @app.get("/scatter")
 def plots(feat_1, feat_2):
-    plot = scatter(feat_1, feat_2)
+    df_plot = scatter(feat_1, feat_2)
+
     #wie kann man plots zurück geben?
     #return StreamingResponse(plot, media_type="image/png")
-    return {'scatter': 'scatter'}
-
-
-
-
-
+    return {'scatter': df_plot.to_json()}
 
 @app.get("/predict")
 def predict(age, bp, sg, al, su, rbc, pc, pcc, ba, bgr, bu,
@@ -118,7 +116,7 @@ def predict(age, bp, sg, al, su, rbc, pc, pcc, ba, bgr, bu,
     result = model.predict(X_test)
     proba = model.predict_proba(X_test)
 
-    return {"result": str(result[0]), "proba": proba}
+    return {"result": str(result[0]), "proba": str(proba)}
 
 
     #if rm:
