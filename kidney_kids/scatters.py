@@ -1,6 +1,8 @@
 import seaborn as sns
 from io import BytesIO
 from kidney_kids.data import get_cleaned_data, get_imputed_data, get_preproc_data
+from sklearn.metrics import f1_score,confusion_matrix
+from sklearn.metrics import recall_score
 
 
 def scatter(feat1, feat2):
@@ -40,3 +42,20 @@ def plot_df(feat1, feat2):
 
 
     return df[[feat1, feat2, 'class']]
+
+
+def confusion_score(classifier):
+    '''this function plots the confusion matrix given a classifier'''
+
+    X_train, X_test, y_train, y_test = get_cleaned_data()
+    X_train_preproc = get_preproc_data(X_train)
+    X_test_preproc = get_preproc_data(X_test)
+
+
+    clr_rf = classifier.fit(X_train_preproc,y_train)
+
+    ac = recall_score(y_test,classifier.predict(X_test_preproc))
+    cm = confusion_matrix(y_test,clr_rf.predict(X_test_preproc))
+
+    #return(sns.heatmap(cm,annot=True,fmt="d"), f'Accuracy is {ac}')
+    return ac, cm[0][0], cm[0][1], cm[1][0], cm[1][1]

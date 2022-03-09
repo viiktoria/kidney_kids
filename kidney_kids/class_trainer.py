@@ -35,6 +35,7 @@ def initiate():
     #print(y_predict)
     return forest_model, X_test
 
+    #trained_model = markus_fct()
 if __name__ == '__main__':
     '''instantiate the model, train it with grid search'''
     forest_model, X_test = initiate()
