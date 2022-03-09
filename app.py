@@ -12,11 +12,17 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
+from kidney_kids.scatters import *
+
 # for this try are used classifiers and accuracy, would not be necessary if model is taken from our modules
 
 ####### importing data and preprocessing #######
 from kidney_kids.data import get_cleaned_data
 from kidney_kids.randomforest import RandomForest
+
+
+
+
 
 X_train, X_test, y_train, y_test = get_cleaned_data()
 
@@ -56,9 +62,34 @@ st.header('Statistics')
 
 st.write("""
 
-         ***Select features for scatterplot***
+         ***Don't hesitate to select your features to get insight from your data, Doc!***
+
+
 
          """)
+
+scatter_features_1 = ["Don't be shy, Doc .. miauuw", "hemo", "ba", "pc", "wc", 'rc', 'cad']
+scatter_features_2 = ["Come on! Now the second one!", "su", "pcv", "bgr", "age", 'pe', 'appet']
+
+select_1 = st.selectbox('', options=scatter_features_1)
+select_2 = st.selectbox('', options=scatter_features_2)
+
+def scatter_plot(X1, X2):
+    df = plot_df(X1, X2)
+    fig, ax = plt.subplots(1, 1, figsize=(8.5, 6))
+    ax = sns.scatterplot(data=df, x=X1, y=X2, hue=df['class'])
+    st.pyplot(fig)
+    return st.write(f'{df.shape[0]} examined kidneys')
+
+if select_1 != scatter_features_1[0] and select_2 != scatter_features_2[0]:
+        st.write("""
+                 ## ***BOOM!***
+                 """)
+        st.write(scatter_plot(select_1, select_2))
+else:
+    '***Make your choice! Now!***'
+
+
 # numeric_columns = X_num_visualiation(X) # function from "data_preparation" notebook
 # x_values = st.selectbox("X axis", options=numeric_columns)
 # y_values = st.selectbox("Y axis", options=numeric_columns)
@@ -75,6 +106,8 @@ st.write("""
 
 st.write("""
 
+         ***
+         ***
          ***
 
          """)
@@ -309,7 +342,7 @@ print(selected_features)
 #### ADD DEFAULT VALUES #######
 
 url = 'https://testimage2-f77cyo2fpq-ew.a.run.app/predict'
-url = 'http://127.0.0.1:8000/predict'
+#url = 'http://127.0.0.1:8000/predict'
 
 result = requests.get(url, selected_features) ######### UNCOMMENT ########
 

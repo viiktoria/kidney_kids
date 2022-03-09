@@ -1,7 +1,6 @@
 import seaborn as sns
 from io import BytesIO
 from kidney_kids.data import get_cleaned_data, get_imputed_data, get_preproc_data
-from sklearn.metrics import accuracy_score, confusion_matrix
 
 
 def scatter(feat1, feat2):
@@ -29,24 +28,15 @@ def scatter_preproc(feat1, feat2):
     X_train = get_cleaned_data()[0]
     df = get_preproc_data(X_train)
     target = get_cleaned_data()[2]
+    graph = sns.scatterplot(data=df, x=feat1, y=feat2, hue=target)
 
-
-
-    return sns.scatterplot(data=df, x=feat1, y=feat2, hue=target)
+    return graph
 
 
 def plot_df(feat1, feat2):
     X_train = get_cleaned_data()[0]
-    df = get_preproc_data(X_train)
-    df['target'] = get_cleaned_data()[2]
-    df[feat1, feat2, 'target']
-
-    return df[feat1, feat2, 'target']
+    df = get_imputed_data(X_train)
+    df['class'] = get_cleaned_data()[2]
 
 
-def confusion_score(classifier):
-    X_train,y_train, y_test,X_test = get_cleaned_data()
-    clr_rf = classifier.fit(X_train,y_train)
-    ac = accuracy_score(y_test,classifier.predict(X_test))
-    cm = confusion_matrix(y_test, clr_rf.predict(X_test))
-    return(sns.heatmap(cm,annot=True,fmt="d"), f'Accuracy is {ac}')
+    return df[[feat1, feat2, 'class']]
