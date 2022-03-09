@@ -16,6 +16,10 @@ from starlette.responses import StreamingResponse
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from kidney_kids.data import get_cleaned_data, get_imputed_data, get_preproc_data
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score,confusion_matrix
+
 
 
 app = FastAPI()
@@ -37,36 +41,46 @@ async def root():
 
 
 @app.get("/model")
-def confusion_matrix(model, params):
+def make_confusion_matrix(model, param1, param2):
     '''takes in the model and its parameters
-    and returns the according confusion matrix'''
+    and returns the according confusion matrix numbers and accuracy score'''
 
     if model == 'knn':
-        k = params['k']
-        model = KNeighborsClassifier(n_neighbors=k)
+        k = int(param1)
+        p = int(param2)
+        model = KNeighborsClassifier(n_neighbors=k, p=p)
     elif model == 'logreg':
-        penalty = params['penalty']
-        C = params['C']
+        penalty = param1
+        C = float(param2)
         model = LogisticRegression(penalty=penalty, C=C)
     else:
+        max_depth = int(param1)
+        n_estimators = int(param2)
+        model = RandomForestClassifier(max_depth=max_depth, n_estimators=n_estimators)
 
+    #### get data ###
+    X_train, X_test, y_train, y_test = get_cleaned_data()
+    X_train_preproc = get_preproc_data(X_train)
+    X_test_preproc = get_preproc_data(X_test)
+    clr_rf = model.fit(X_train_preproc,y_train)
 
-        model = RandomForestClassifier()
+    ### make calculations for confusion matrix ###
+    ac = recall_score(y_test,model.predict(X_test_preproc))
+    cm = confusion_matrix(y_test,clr_rf.predict(X_test_preproc))
 
-    #get confusion matrxi from scatters.py
-    df_conf_matrix = confusion_score(model)
+    return {'ac': str(ac), 'cm1': str(cm[0][0]), 'cm2': str(cm[0][1]), 'cm3': str(cm[1][0]), 'cm4': str(cm[1][1])}
 
-
-    return {'conf_matrix': df_conf_matrix.to_json()}
 
 
 @app.get("/scatter")
 def plots(feat_1, feat_2):
-    df_plot = scatter(feat_1, feat_2)
+    X_train = get_cleaned_data()[0]
+    df = get_imputed_data(X_train)
+    df['class'] = get_cleaned_data()[2]
 
-    #wie kann man plots zurück geben?
-    #return StreamingResponse(plot, media_type="image/png")
-    return {'scatter': df_plot.to_json()}
+    df = df[[feat_1, feat_2, 'class']]
+    return df.to_json()
+
 
 @app.get("/predict")
 def predict(age, bp, sg, al, su, rbc, pc, pcc, ba, bgr, bu,
@@ -120,9 +134,6 @@ def predict(age, bp, sg, al, su, rbc, pc, pcc, ba, bgr, bu,
 
     result = model.predict(X_test)
     proba = model.predict_proba(X_test)
-
-
-
 
     return {"result": str(result[0]), "proba": str(proba[0][1])}
 
